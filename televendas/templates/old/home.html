@@ -1,0 +1,92 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    
+</br>
+<div class="py-4 text-center">
+    <div style="display:inline-block;vertical-align:top;">
+        <img src="/televendas/static/img/tahto3.png" width="90px" alt="img"/>
+    </div>
+    <div style="display:inline-block;">
+        <h2>{{ titulo }}</h2> 
+    </div>
+    <div style="display:inline-block;vertical-align:top;">
+        <a href="{{ url_for('televendas.home_televendas') }}">
+            <img src="/televendas/static/img/atualizar.png" width="50px" alt="img"/>
+        </a>
+    </div>
+    </br>
+
+    <form method="POST" action="{{ url_for('televendas.buscar_televendas') }}">
+      <div class="col-md-3 mx-auto">
+          <div class="row">
+              <div class="col-md-3">
+                  <label for="filtro"><strong><h5>Filtro:</h5></strong></label>
+              </div>
+              <div class="col-md-6">
+                  <select class="form-select" name="filtro" aria-label="Default select example">
+                      <option value="select">Selecione</option>
+                      <option value="ba">BA</option>
+                      <option value="ce">CE</option>
+                      <option value="df">DF</option>
+                      <option value="mg">MG</option>
+                      <option value="ms">MS</option>
+                      <option value="pe">PE</option>
+                      <option value="pr">PR</option>
+                      <option value="rj">RJ</option>
+                      <option value="rs">RS</option>
+                      <option value="sp">SP</option>                    
+                  </select>
+              </div>
+              <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary">Buscar</button>
+              </div>
+          </div>
+      </div>
+  </form>
+    </br>
+</div>
+
+
+
+<div class="container col-md-8">
+    <table class="table table-bordered text-center">
+        <thead class="thead-light bg-light text-center">
+          <tr>
+            <th scope="col"><small><strong>Origem</strong></small></th>
+            <th scope="col"><small><strong>Discadas</strong></small></th>
+            <th scope="col"><small><strong>Inválidas</strong></small></th>
+            <th scope="col"><small><strong>%</strong></small></th>
+            <th scope="col"><small><strong>Farol</strong></small></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {% for row in rows %}
+          <tr>
+            <th scope="row"><small class="text-muted">PAV</small></th>
+            <td small class="text-muted">{{ row[0] }}</td>
+            <td small class="text-muted">{{ row[1] }}</td>
+            <td small class="text-muted">{{ row[2] }}%</td>
+
+            {% set row2_as_int = row[2] | replace('%', '') | int %}
+
+            {% if row2_as_int < 70 %}
+                <td><img src="../televendas/static/img/verde.png" width="25"></td>
+
+            {% elif 70 <= row2_as_int <= 80 %}
+                <td><img src="../televendas/static/img/amarelo.png" width="30"></td>
+
+            {% else %}
+                <td><img src="../televendas/static/img/vermelho.png" width="25"></td>
+
+            {% endif %}
+
+          {% endfor %}  
+
+        </tbody>
+      </table>
+</div>
+</div>
+<script src="televendas/static/js/auth.js"></script>
+{% endblock %}
+

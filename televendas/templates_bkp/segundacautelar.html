@@ -1,0 +1,101 @@
+{% extends "template.html" %}
+{% block conteudo %}
+
+</br></br>
+
+</br>
+<div class="container">
+<div class="border bg-light">
+    <a href="{{ url_for('televendas.home_televendas') }}" class="btn bg-light text-primary">Primeira Cautelar</a>
+    <button class="btn bg-white text-muted border bg-light">Segunda Cautelar</button>
+</div>
+
+<div class="border">
+<div class="container col-md-12">
+<div class="container mt-5 px-2">
+    
+    <form method="POST" role="search" action="{{ url_for('televendas.buscarscautelar_televendas') }}">
+        <div class="mb-2 d-flex justify-content-between align-items-center"> 
+            <div class="position-relative">
+                <span class="position-absolute search"></span>
+                <input class="form-control w-100" name="pesquisa" id="pesquisa" placeholder="Pesquisar...">
+            </div>
+        </div>
+    </form>
+
+    <div style="position: relative;">
+        <a href="{{ url_for('televendas.segundacautelar_televendas') }}">
+            <img src="static/img/atualizar.png" width="35" style="position: absolute; right: 0; top: -40px;">
+        </a>
+    </div>
+
+        <div class="table-responsive bg-light">
+            <table class="table table-responsive table-bordered table-striped table-hover bg-light">    
+                <thead>
+                    <tr class="bg-light">
+                    <th scope="col" width="10%"><small>ORIGFLEX</small></th>
+                    <th scope="col" width="10%"><small>UN's</small></th>
+                    <th scope="col" width="15%"><small>Total Discagem</small></th>
+                    <th scope="col" width="15%"><small>Total Inválidas</small></th>
+                    <th scope="col" width="15%"><small>% de Inválidas</small></th>
+                    <th scope="col" width="8%"><small>Farol</small></th>
+                    <th scope="col" width="15%"><small>Total Consultadas</small></th>
+                    <th scope="col" width="10%"><small>Limite</small></th>
+                    <th scope="col" width="10%"><small>Status</small></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light">
+
+                    {% for row in rowss %}
+                    <tr>
+                        <!-- ORIGFLEX -->
+                        <td> {{ row[0] }} </td>
+    
+                        <!-- UN's -->
+                        <td> A5 </td>
+    
+                        <!-- Total Discagem -->
+                        <td> {{ row[1] }} </td>
+    
+                        <!-- Total Inválidas -->
+                        <td> {{ row[2] }}</td>
+    
+                        <!-- % de Inválidas -->
+                        <td> {{ row[3] }} </td>
+    
+                        <!-- Farol -->
+                        {% set row3_as_int = row[3] | replace('%', '') | int %}
+    
+                        {% if row3_as_int < 70 %}
+                            <td><img src="static/img/verde.png" width="25"></td>
+    
+                        {% elif 70 <= row3_as_int <= 80 %}
+                            <td><img src="static/img/amarelo.png" width="30"></td>
+    
+                        {% else %}
+                            <td><img src="static/img/vermelho.png" width="25"></td>
+    
+                        {% endif %}
+    
+                                
+                        <!-- Total Consultadas -->
+                        <td> {{ row[4] }} </td>
+    
+                        <!-- Limite -->
+                        <td> {{ row[5] }} </td>
+    
+                        <!-- Status -->
+                        <td class="bg-success text-white border bg-success"> Ativo </td>
+                    </tr>
+                    {% endfor %}    
+
+                </tbody>
+            </table>
+        </div>
+</div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}

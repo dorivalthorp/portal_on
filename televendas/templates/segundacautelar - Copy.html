@@ -1,0 +1,299 @@
+{% extends "template.html" %}
+{% block conteudo %}
+
+
+<div class="container">
+    <div id="contador-container" class="text-center mt-3"> 
+        A página será atualizada em <strong><span id="contador">300 </strong></span> segundos.
+    </div>
+</div>
+
+</br></br>
+
+<div class="container col-md-8">
+    <table class="table table-bordered text-center">
+        <thead class="thead-light bg-light text-center">
+          <tr>
+            <th scope="col"><small><strong>Origem</strong></small></th>
+            <th scope="col"><small><strong>Discadas</strong></small></th>
+            <th scope="col"><small><strong>Inválidas</strong></small></th>
+            <th scope="col"><small><strong>%</strong></small></th>
+            <th scope="col"><small><strong>Farol</strong></small></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {% for row in rows %}
+          <tr>
+            <th scope="row"><small class="text-muted">PAV</small></th>
+            <td small class="text-muted">{{ row[0] }}</td>
+            <td small class="text-muted">{{ row[1] }}</td>
+            <td small class="text-muted">{{ row[2] }}%</td>
+
+            {% set row2_as_int = row[2] | replace('%', '') | int %}
+
+            {% if row2_as_int < 70 %}
+                <td><img src="../televendas/static/img/verde.png" width="25"></td>
+
+            {% elif 70 <= row2_as_int <= 80 %}
+                <td><img src="../televendas/static/img/amarelo.png" width="30"></td>
+
+            {% else %}
+                <td><img src="../televendas/static/img/vermelho.png" width="25"></td>
+
+            {% endif %}
+
+          {% endfor %}  
+
+        </tbody>
+      </table>
+</div>
+
+</br>
+<div class="container">
+<div class="border bg-light">
+    <a href="{{ url_for('televendas.home_televendas') }}" class="btn bg-light text-primary">Primeira Cautelar</a>
+    <button class="btn bg-white text-muted border bg-light">Segunda Cautelar</button>
+</div>
+
+<div class="border">
+<div class="container col-md-12">
+<div class="container mt-5 px-2">
+    
+    <form method="POST" role="search" action="{{ url_for('televendas.buscarscautelar_televendas') }}">
+        <div class="mb-2 d-flex justify-content-between align-items-center"> 
+            <div class="position-relative">
+                <span class="position-absolute search"></span>
+                <input class="form-control w-100" name="pesquisa" id="pesquisa" placeholder="Pesquisar...">
+            </div>
+        </div>
+    </form>
+
+    <div style="position: relative;">
+        <a href="{{ url_for('televendas.segundacautelar_televendas') }}">
+            <img src="static/img/atualizar.png" width="35" style="position: absolute; right: 0; top: -40px;">
+        </a>
+    </div>
+
+        <div class="table-responsive bg-light">
+            <table class="table table-responsive table-bordered table-striped table-hover bg-light dataTable">    
+                <thead>
+                    <tr class="bg-light">
+                        <th scope="col" width="8%"><small><strong> ORIGFLEX</strong> </small></th>
+                        <th scope="col" width="6%"><small><strong> UN's</strong></small></th>
+                        <th scope="col" width="15%"><small><strong>Total Discagem</strong></small> <a href="#" data-campo="Total Discagem"><i class="fas fa-sort"></i></a></th>
+                        <th scope="col" width="15%"><small><strong>Total Inválidas</strong></small> <a href="#" data-campo="Total Inválidas"><i class="fas fa-sort"></i></a></th>
+                        <th scope="col" width="15%"><small><strong>% de Inválidas</strong></small> <a href="#" data-campo="% de Inválidas"><i class="fas fa-sort"></i></a></th>
+                        <th scope="col" width="18%"><small><strong>Última Ligação </strong></small></th>
+                        <th scope="col" width="6%"><small><strong> Farol</strong></small></th>
+                        <th scope="col" width="8%"><small><strong>Total Consultadas </strong></small></th>
+                        <th scope="col" width="6%"><small><strong>Limite </strong></small></th>
+                        <th scope="col" width="5%"><small><strong>Status </strong></small></th>
+                    </tr>
+                </thead>                
+                
+                
+                <tbody class="bg-light">
+
+                    {% for row in rowss %}
+                    <tr>
+                        <!-- ORIGFLEX -->
+                        <td>
+                            <a href="#" onclick="exibirPopUp(this, '{{ row[0] }}'); return false;"> {{ row[0] }} </a>
+                        </td>
+                        
+
+                        <!-- UN's -->
+                        <td> A5 </td>
+    
+                        <!-- Total Discagem -->
+                        <td> {{ row[1] }} </td>
+    
+                        <!-- Total Inválidas -->
+                        <td> {{ row[2] }}</td>
+    
+                        <!-- % de Inválidas -->
+                        <td> {{ row[3] }} </td>
+
+                        <!-- Última Ligação -->
+                        <td>
+                            {{ data_por_originador[row[0]].strftime('%d/%m/%y %H:%M:%S') if row[0] in data_por_originador else '-' }}
+                        </td>
+    
+                        <!-- Farol -->
+                        {% set row3_as_int = row[3] | replace('%', '') | int %}
+    
+                        {% if row3_as_int < 70 %}
+                            <td><img src="static/img/verde.png" width="25"></td>
+    
+                        {% elif 70 <= row3_as_int <= 80 %}
+                            <td><img src="static/img/amarelo.png" width="30"></td>
+    
+                        {% else %}
+                            <td><img src="static/img/vermelho.png" width="25"></td>
+    
+                        {% endif %}
+    
+                                
+                        <!-- Total Consultadas -->
+                        <td> {{ row[4] }} </td>
+    
+                        <!-- Limite -->
+                        <td> {{ row[5] }} </td>
+    
+                        <!-- Status -->
+                        {% set row3_as_int = row[3] | replace('%', '') | int %}
+
+                        {% if row3_as_int <= 80 %}
+                            <td class="bg-success text-white border bg-success"> Ativo </td>
+                        {% else %}
+                            <td class="bg-danger text-white border bg-danger"> Inativo </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}    
+
+                </tbody>
+            </table>
+        </div>
+</div>
+</div>
+</div>
+
+<script>
+    // Função para atualizar a página a cada 5 minutos (300.000 milissegundos)
+    function atualizarPagina() {
+        location.reload();
+    }
+
+    // Chama a função para atualizar a página a cada 5 minutos
+    setInterval(atualizarPagina, 300000); // 300000 milissegundos = 5 minutos
+
+
+    // Função para atualizar a contagem regressiva
+    function atualizarContagemRegressiva(segundos) {
+        const contadorElemento = document.getElementById("contador");
+
+        // Atualiza o valor do elemento
+        contadorElemento.textContent = segundos;
+
+        // Decrementa o contador
+        segundos--;
+
+        // Se o tempo acabar, atualiza a página
+        if (segundos < 0) {
+            location.reload();
+        } else {
+            // Chama a função novamente após 1 segundo
+            setTimeout(() => atualizarContagemRegressiva(segundos), 1000);
+        }
+    }
+
+    // Inicializa a contagem regressiva
+    atualizarContagemRegressiva(300); // Inicializa a contagem em 300 segundos (5 minutos)
+
+
+
+function exibirPopUp(link, originador) {
+    fetch(`/televendas/obterResultado?originador=${encodeURIComponent(originador)}`)
+        .then(response => response.json())
+        .then(data => exibirJanelaPopUp(link, data.resultado))
+        .catch(error => console.error('Erro ao obter resultado:', error));
+}
+
+let popupWindow = null; // Variável para armazenar a referência da janela popup
+
+function exibirJanelaPopUp(link, resultado) {
+    // Se a janela popup estiver aberta, fecha-a
+    if (popupWindow) {
+        popupWindow.close();
+    }
+
+    const popupWidth = 300;
+    const popupHeight = 200;
+
+    const popupLeft = link.getBoundingClientRect().right + window.scrollX;
+    const popupTop = link.getBoundingClientRect().top + window.scrollY;
+
+    popupWindow = window.open(
+        '',
+        'popup',
+        `width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`
+    );
+
+    popupWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Resultado da Consulta</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f2f2f2;
+                }
+                .popup-content {
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                    border-radius: 5px;
+                    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+                }
+                .close-button {
+                    margin-top: 10px;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="popup-content">
+                <p>${resultado}</p>
+                <div class="close-button">
+                    <button onclick="window.close()">Fechar</button>
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+}
+
+    const table = document.querySelector('.dataTable');
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+    const sortState = {};
+
+    document.querySelectorAll('[data-campo]').forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const campo = this.getAttribute('data-campo');
+            const columnIndex = getColumnIndex(campo);
+
+            sortState[campo] = !sortState[campo];
+
+            const sortedRows = rows.sort((a, b) => {
+                const aValue = a.querySelector(`td:nth-child(${columnIndex})`).textContent.trim();
+                const bValue = b.querySelector(`td:nth-child(${columnIndex})`).textContent.trim();
+
+                const compareResult = aValue.localeCompare(bValue, undefined, { numeric: true, sensitivity: 'base' });
+                return sortState[campo] ? compareResult : -compareResult;
+            });
+
+            sortedRows.forEach(row => table.querySelector('tbody').appendChild(row));
+        });
+    });
+
+    function getColumnIndex(campo) {
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        return headers.findIndex(header => header.textContent.trim() === campo) + 1;
+    }
+
+
+
+</script>
+
+</div>
+
+
+
+{% endblock %}
